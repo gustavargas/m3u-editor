@@ -6,6 +6,7 @@ use App\Jobs\ProcessEpgImport;
 use App\Jobs\ProcessM3uImport;
 use App\Models\Epg;
 use App\Models\Playlist;
+use App\Models\MergedPlaylist;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -434,5 +435,102 @@ class ApiController extends Controller
 
         $channel->delete();
         return response()->json(['message' => 'Channel deleted']);
+    }
+    /**
+     * Get merged playlists.
+     * 
+     * Returns a list of all merged playlists belonging to the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, playlists: array{id: integer, name: string}[], channels: array{id: integer, name: string}[]}[]
+     */
+    public function getMergedPlaylists(Request $request): JsonResponse
+    {
+        $mergedPlaylists = $request->user()->mergedPlaylists()
+            ->with(['playlists', 'channels'])
+            ->get();
+        return response()->json($mergedPlaylists);
+    }
+
+    /**
+     * Create merged playlist.
+     * 
+     * Creates a new merged playlist for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response 201 array{id: integer, name: string, playlists: array{id: integer, name: string}[]}
+     */
+    public function createMergedPlaylist(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'playlists' => 'required|array',
+            'playlists.*' => 'exists:playlists,id'
+        ]);
+
+        $mergedPlaylist = $request->user()->mergedPlaylists()->create([
+            'name' => $validated['name']
+        ]);
+
+        $mergedPlaylist->playlists()->attach($validated['playlists']);
+
+        return response()->json($mergedPlaylist->load('playlists'), 201);
+    }
+
+    /**
+     * Update merged playlist.
+     * 
+     * Updates an existing merged playlist. Only the owner can update the merged playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\MergedPlaylist $mergedPlaylist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, playlists: array{id: integer, name: string}[]}
+     * @response 403 array{message: "Unauthorized"}
+     */
+    public function updateMergedPlaylist(Request $request, MergedPlaylist $mergedPlaylist): JsonResponse
+    {
+        if ($request->user()->id !== $mergedPlaylist->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'string|max:255',
+            'playlists' => 'array',
+            'playlists.*' => 'exists:playlists,id'
+        ]);
+
+        if (isset($validated['name'])) {
+            $mergedPlaylist->update(['name' => $validated['name']]);
+        }
+
+        if (isset($validated['playlists'])) {
+            $mergedPlaylist->playlists()->sync($validated['playlists']);
+        }
+
+        return response()->json($mergedPlaylist->load('playlists'));
+    }
+
+    /**
+     * Delete merged playlist.
+     * 
+     * Deletes an existing merged playlist. Only the owner can delete the merged playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\MergedPlaylist $mergedPlaylist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{message: "Merged playlist deleted"}
+     * @response 403 array{message: "Unauthorized"}
+     */
+    public function deleteMergedPlaylist(Request $request, MergedPlaylist $mergedPlaylist): JsonResponse
+    {
+        if ($request->user()->id !== $mergedPlaylist->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $mergedPlaylist->delete();
+        return response()->json(['message' => 'Merged playlist deleted']);
     }
 }

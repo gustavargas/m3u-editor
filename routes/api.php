@@ -52,6 +52,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             Route::delete('/{channel}', [\App\Http\Controllers\ApiController::class, 'deleteChannel']);
         });
 
+        // Merged Playlist routes
+        Route::group(['prefix' => 'merged-playlists'], function () {
+            Route::get('/', [\App\Http\Controllers\ApiController::class, 'getMergedPlaylists']);
+            Route::post('/', [\App\Http\Controllers\ApiController::class, 'createMergedPlaylist']);
+            Route::put('/{mergedPlaylist}', [\App\Http\Controllers\ApiController::class, 'updateMergedPlaylist']);
+            Route::delete('/{mergedPlaylist}', [\App\Http\Controllers\ApiController::class, 'deleteMergedPlaylist']);
+        });
+
     });
 
     // ...
