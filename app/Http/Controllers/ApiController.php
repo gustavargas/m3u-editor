@@ -83,7 +83,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Get all playlists
+     * Get all playlists.
+     * 
+     * Returns a list of all playlists belonging to the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, url: string, import_prefs: array}[]
      */
     public function getPlaylists(Request $request): JsonResponse
     {
@@ -92,7 +98,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Create new playlist
+     * Create new playlist.
+     * 
+     * Creates a new playlist for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response 201 array{id: integer, name: string, url: string, import_prefs: array}
      */
     public function createPlaylist(Request $request): JsonResponse
     {
@@ -107,7 +119,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Update existing playlist
+     * Update existing playlist.
+     * 
+     * Updates an existing playlist. Only the owner can update the playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Playlist $playlist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, url: string, import_prefs: array}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function updatePlaylist(Request $request, Playlist $playlist): JsonResponse
     {
@@ -126,7 +146,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Delete playlist
+     * Delete playlist.
+     * 
+     * Deletes an existing playlist. Only the owner can delete the playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Playlist $playlist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{message: "Playlist deleted"}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function deletePlaylist(Request $request, Playlist $playlist): JsonResponse
     {
@@ -139,7 +167,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Get all groups
+     * Get all groups.
+     * 
+     * Returns a list of all groups belonging to the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, playlist_id: integer, playlist: array{id: integer, name: string}}[]
      */
     public function getGroups(Request $request): JsonResponse
     {
@@ -148,7 +182,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Create new group
+     * Create new group.
+     * 
+     * Creates a new group for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response 201 array{id: integer, name: string, playlist_id: integer}
      */
     public function createGroup(Request $request): JsonResponse
     {
@@ -162,7 +202,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Update group
+     * Update group.
+     * 
+     * Updates an existing group. Only the owner can update the group.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Group $group
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, playlist_id: integer}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function updateGroup(Request $request, Group $group): JsonResponse
     {
@@ -180,7 +228,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Delete group
+     * Delete group.
+     * 
+     * Deletes an existing group. Only the owner can delete the group.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Group $group
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{message: "Group deleted"}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function deleteGroup(Request $request, Group $group): JsonResponse
     {
@@ -193,7 +249,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Get custom playlists
+     * Get custom playlists.
+     * 
+     * Returns a list of all custom playlists belonging to the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, channels: array{id: integer, name: string}[]}[]
      */
     public function getCustomPlaylists(Request $request): JsonResponse
     {
@@ -202,7 +264,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Create custom playlist
+     * Create custom playlist.
+     * 
+     * Creates a new custom playlist for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response 201 array{id: integer, name: string, channels: array{id: integer, name: string}[]}
      */
     public function createCustomPlaylist(Request $request): JsonResponse
     {
@@ -224,7 +292,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Update custom playlist
+     * Update custom playlist.
+     * 
+     * Updates an existing custom playlist. Only the owner can update the custom playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\CustomPlaylist $customPlaylist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, channels: array{id: integer, name: string}[]}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function updateCustomPlaylist(Request $request, CustomPlaylist $customPlaylist): JsonResponse
     {
@@ -250,7 +326,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Delete custom playlist
+     * Delete custom playlist.
+     * 
+     * Deletes an existing custom playlist. Only the owner can delete the custom playlist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\CustomPlaylist $customPlaylist
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{message: "Custom playlist deleted"}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function deleteCustomPlaylist(Request $request, CustomPlaylist $customPlaylist): JsonResponse
     {
@@ -263,7 +347,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Get channels
+     * Get channels.
+     * 
+     * Returns a list of all channels belonging to the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, url: string, playlist_id: integer, group_id: integer|null, enabled: boolean, shift: integer, playlist: array{id: integer, name: string}, group: array{id: integer, name: string}|null}[]
      */
     public function getChannels(Request $request): JsonResponse
     {
@@ -272,7 +362,13 @@ class ApiController extends Controller
     }
 
     /**
-     * Create new channel
+     * Create new channel.
+     * 
+     * Creates a new channel for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @response 201 array{id: integer, name: string, url: string, playlist_id: integer, group_id: integer|null, enabled: boolean, shift: integer}
      */
     public function createChannel(Request $request): JsonResponse
     {
@@ -290,7 +386,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Update channel
+     * Update channel.
+     * 
+     * Updates an existing channel. Only the owner can update the channel.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Channel $channel
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{id: integer, name: string, url: string, playlist_id: integer, group_id: integer|null, enabled: boolean, shift: integer}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function updateChannel(Request $request, Channel $channel): JsonResponse
     {
@@ -312,7 +416,15 @@ class ApiController extends Controller
     }
 
     /**
-     * Delete channel
+     * Delete channel.
+     * 
+     * Deletes an existing channel. Only the owner can delete the channel.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Channel $channel
+     * @return \Illuminate\Http\JsonResponse
+     * @response array{message: "Channel deleted"}
+     * @response 403 array{message: "Unauthorized"}
      */
     public function deleteChannel(Request $request, Channel $channel): JsonResponse
     {
